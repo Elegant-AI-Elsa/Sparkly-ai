@@ -2,90 +2,404 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AI Web Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Q&A Bot</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f9f9f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        h1 {
-            color: #333;
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
         }
-        form {
-            margin-bottom: 20px;
-        }
-        input[type="text"] {
-            padding: 10px;
-            width: 60%;
-            max-width: 500px;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            padding: 10px 15px;
-            background-color: #007BFF;
-            border: none;
+
+        .header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
-            border-radius: 5px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(248, 250, 252, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .section h2 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .url-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .url-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
-        button:hover {
-            background-color: #0056b3;
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
         }
-        #response {
-            margin-top: 20px;
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .status {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .question-input {
+            width: 100%;
             padding: 15px;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            max-width: 600px;
-            white-space: pre-wrap;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .question-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .answer-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .website-preview {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #475569;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .qa-section {
+            opacity: 0.5;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .qa-section.enabled {
+            opacity: 1;
+            pointer-events: auto;
         }
     </style>
 </head>
 <body>
-    <h1>🌐 AI Web Assistant</h1>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Website Q&A Bot</h1>
+            <p>Scrape any website and ask questions about its content using AI</p>
+        </div>
 
-    <form id="train-form">
-        <input type="text" id="url" placeholder="Enter website URL to train" required />
-        <button type="submit">Train</button>
-    </form>
+        <div class="content">
+            <!-- URL Scraping Section -->
+            <div class="section">
+                <h2>
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                    </svg>
+                    1. Paste Website URL
+                </h2>
+                <div class="url-input-group">
+                    <input type="url" id="urlInput" class="url-input" placeholder="https://example.com" />
+                    <button id="scrapeBtn" class="btn btn-primary">
+                        <span id="scrapeText">Scrape Website</span>
+                        <div id="scrapeLoading" class="loading hidden"></div>
+                    </button>
+                </div>
+                <div id="scrapeStatus"></div>
+            </div>
 
-    <form id="ask-form">
-        <input type="text" id="question" placeholder="Ask your question here..." required />
-        <button type="submit">Ask</button>
-    </form>
-
-    <div id="response">Response will appear here...</div>
+            <!-- Q&A Section -->
+            <div class="section qa-section" id="qaSection">
+                <h2>
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    2. Ask Questions About the Website
+                </h2>
+                <textarea id="questionInput" class="question-input" placeholder="What is this website about? What are the main topics covered? etc."></textarea>
+                <button id="askBtn" class="btn btn-primary">
+                    <span id="askText">Ask Question</span>
+                    <div id="askLoading" class="loading hidden"></div>
+                </button>
+                <div id="answerBox" class="answer-box hidden">
+                    <div id="answerContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        document.getElementById('train-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const url = document.getElementById('url').value.trim();
-            document.getElementById('response').innerText = 'Training in progress...';
-            const res = await fetch('/train', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({url})
-            });
-            const data = await res.json();
-            document.getElementById('response').innerText = data.message || data.error;
-        };
+        class WebsiteBot {
+            constructor() {
+                this.scrapeBtn = document.getElementById('scrapeBtn');
+                this.askBtn = document.getElementById('askBtn');
+                this.urlInput = document.getElementById('urlInput');
+                this.questionInput = document.getElementById('questionInput');
+                this.scrapeStatus = document.getElementById('scrapeStatus');
+                this.answerBox = document.getElementById('answerBox');
+                this.answerContent = document.getElementById('answerContent');
+                this.qaSection = document.getElementById('qaSection');
+                
+                this.initEventListeners();
+            }
 
-        document.getElementById('ask-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const question = document.getElementById('question').value.trim();
-            document.getElementById('response').innerText = 'Getting answer...';
-            const res = await fetch('/ask', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({question})
-            });
-            const data = await res.json();
-            document.getElementById('response').innerText = data.answer || data.error;
-        };
+            initEventListeners() {
+                this.scrapeBtn.addEventListener('click', () => this.scrapeWebsite());
+                this.askBtn.addEventListener('click', () => this.askQuestion());
+                
+                // Allow Enter key to submit
+                this.urlInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.scrapeWebsite();
+                });
+                
+                this.questionInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && e.ctrlKey) this.askQuestion();
+                });
+            }
+
+            showLoading(type) {
+                if (type === 'scrape') {
+                    document.getElementById('scrapeText').textContent = 'Scraping...';
+                    document.getElementById('scrapeLoading').classList.remove('hidden');
+                    this.scrapeBtn.disabled = true;
+                } else if (type === 'ask') {
+                    document.getElementById('askText').textContent = 'Thinking...';
+                    document.getElementById('askLoading').classList.remove('hidden');
+                    this.askBtn.disabled = true;
+                }
+            }
+
+            hideLoading(type) {
+                if (type === 'scrape') {
+                    document.getElementById('scrapeText').textContent = 'Scrape Website';
+                    document.getElementById('scrapeLoading').classList.add('hidden');
+                    this.scrapeBtn.disabled = false;
+                } else if (type === 'ask') {
+                    document.getElementById('askText').textContent = 'Ask Question';
+                    document.getElementById('askLoading').classList.add('hidden');
+                    this.askBtn.disabled = false;
+                }
+            }
+
+            showStatus(message, isError = false) {
+                this.scrapeStatus.innerHTML = message;
+                this.scrapeStatus.className = `status ${isError ? 'error' : 'success'}`;
+            }
+
+            async scrapeWebsite() {
+                const url = this.urlInput.value.trim();
+                if (!url) {
+                    this.showStatus('Please enter a URL', true);
+                    return;
+                }
+
+                this.showLoading('scrape');
+                
+                try {
+                    const response = await fetch('/scrape', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ url: url })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.showStatus(`
+                            <strong>✅ Website scraped successfully!</strong><br>
+                            <small>Content length: ${result.content_length} characters</small>
+                            <div class="website-preview">
+                                <strong>Preview:</strong><br>
+                                ${result.preview}
+                            </div>
+                        `);
+                        this.qaSection.classList.add('enabled');
+                        this.questionInput.focus();
+                    } else {
+                        this.showStatus(`❌ Error: ${result.error}`, true);
+                    }
+                } catch (error) {
+                    this.showStatus(`❌ Network error: ${error.message}`, true);
+                } finally {
+                    this.hideLoading('scrape');
+                }
+            }
+
+            async askQuestion() {
+                const question = this.questionInput.value.trim();
+                if (!question) {
+                    alert('Please enter a question');
+                    return;
+                }
+
+                this.showLoading('ask');
+                this.answerBox.classList.add('hidden');
+                
+                try {
+                    const response = await fetch('/ask', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ question: question })
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.answerContent.innerHTML = `
+                            <strong>Q:</strong> ${question}<br><br>
+                            <strong>A:</strong> ${result.answer.replace(/\n/g, '<br>')}<br><br>
+                            <small><em>Source: ${result.source_url}</em></small>
+                        `;
+                        this.answerBox.classList.remove('hidden');
+                    } else {
+                        this.answerContent.innerHTML = `<strong>Error:</strong> ${result.error}`;
+                        this.answerBox.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    this.answerContent.innerHTML = `<strong>Network Error:</strong> ${error.message}`;
+                    this.answerBox.classList.remove('hidden');
+                } finally {
+                    this.hideLoading('ask');
+                }
+            }
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new WebsiteBot();
+        });
     </script>
 </body>
 </html>

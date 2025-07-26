@@ -1,46 +1,26 @@
-# gemini_qa.py
-
 import os
-from dotenv import load_dotenv
-from langchain.chains.question_answering import load_qa_chain
-from langchain.prompts import PromptTemplate
-
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from dotenv import load_dotenv
 
-from qdrant_client import QdrantClient
-from langchain_community.vectorstores import Qdrant
-
-# Load environment variables
 load_dotenv()
 
-# Initialize Gemini LLM
-llm = ChatGoogleGenerativeAI(
-    model="gemini-pro",
-    google_api_key=os.getenv("GOOGLE_API_KEY"),
-    temperature=0.7
-)
+llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=os.getenv("GEMINI_API_KEY"))
+embedding_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=os.getenv("GEMINI_API_KEY"))
 
-def get_chain():
-    prompt = PromptTemplate.from_template("Answer based on context:\n{context}\n\nQ: {question}\nA:")
-    return load_qa_chain(llm, chain_type="stuff", prompt=prompt)
+def split_text(text):
+    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    return splitter.split_text(text)
 
-def get_answer(question):
-    client = QdrantClient(
-        url=os.getenv("QDRANT_URL"),
-        api_key=os.getenv("QDRANT_API_KEY")
-    )
+def embed_chunks(chunks):
+    return embedding_model.embed_documents(chunks)
 
-    embeddings = GoogleGenerativeAIEmbeddings(
-        model="models/embedding-001",
-        google_api_key=os.getenv("GOOGLE_API_KEY")
-    )
+def embed_query(query):
+    return embedding_model.embed_query(query)
 
-    vectordb = Qdrant(
-        client=client,
-        collection_name="ai-web-assistant",  # Match this with vector_store.py
-        embeddings=embeddings
-    )
-
-    docs = vectordb.similarity_search(question, k=5)
-    chain = get_chain()
-    return chain.run(input_documents=docs, question=question)
+def get_answer(context, query):
+    prompt = f"""You are an assistant answering questions from a website.
+Use the following context:\n{context}\n
+Question: {query}
+Answer:"""
+    return llm.invoke(prompt).content
