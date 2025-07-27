@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Q&A Bot</title>
+    <title>Sparkly-AI-Assistance</title>
     <style>
         * {
             margin: 0;
@@ -13,318 +13,376 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            height: 100vh;
             overflow: hidden;
-            backdrop-filter: blur(10px);
         }
 
         .header {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background: linear-gradient(135deg, #DE3A5B, #c62d47);
             color: white;
-            padding: 30px;
+            padding: 1rem 2rem;
             text-align: center;
+            box-shadow: 0 2px 10px rgba(222, 58, 91, 0.3);
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            font-weight: 700;
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 1px;
         }
 
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+        .main-container {
+            display: flex;
+            height: calc(100vh - 80px);
         }
 
-        .content {
-            padding: 30px;
+        .left-panel, .right-panel {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
         }
 
-        .section {
-            margin-bottom: 30px;
-            padding: 20px;
+        .left-panel {
+            background: white;
+            border-right: 3px solid #DE3A5B;
+        }
+
+        .right-panel {
+            background: #f8f9fa;
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .trainer-section {
+            background: white;
             border-radius: 15px;
-            background: rgba(248, 250, 252, 0.8);
-            border: 1px solid rgba(226, 232, 240, 0.5);
-        }
-
-        .section h2 {
-            color: #1e293b;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .url-input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
 
         .url-input {
-            flex: 1;
+            width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 1rem;
+            transition: border-color 0.3s ease;
         }
 
         .url-input:focus {
             outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            border-color: #DE3A5B;
         }
 
-        .btn {
-            padding: 12px 24px;
+        .train-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #DE3A5B, #c62d47);
+            color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 1rem;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 1rem;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
-        }
-
-        .btn-primary:hover {
+        .train-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 5px 15px rgba(222, 58, 91, 0.4);
         }
 
-        .btn:disabled {
-            opacity: 0.6;
+        .train-btn:disabled {
+            background: #ccc;
             cursor: not-allowed;
-            transform: none !important;
+            transform: none;
+            box-shadow: none;
         }
 
-        .status {
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 4px solid #DE3A5B;
+        }
+
+        .status-text {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 15px;
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #333, #555);
+            color: white;
+            padding: 1rem;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .refresh-btn {
+            background: #DE3A5B;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #c62d47;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: calc(100vh - 350px);
+        }
+
+        .message {
+            margin-bottom: 1rem;
             padding: 12px 16px;
-            border-radius: 10px;
-            margin-top: 15px;
-            font-weight: 500;
+            border-radius: 12px;
+            max-width: 80%;
+            word-wrap: break-word;
         }
 
-        .status.success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
+        .user-message {
+            background: linear-gradient(135deg, #DE3A5B, #c62d47);
+            color: white;
+            margin-left: auto;
+            text-align: right;
         }
 
-        .status.error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
+        .bot-message {
+            background: #f1f3f4;
+            color: #333;
+            border: 1px solid #e1e5e9;
         }
 
-        .question-input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 1rem;
-            margin-bottom: 15px;
-            resize: vertical;
-            min-height: 80px;
-            font-family: inherit;
+        .chat-input-container {
+            padding: 1rem;
+            border-top: 1px solid #e1e5e9;
+            background: #f8f9fa;
+            border-radius: 0 0 15px 15px;
         }
 
-        .question-input:focus {
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-input:focus {
             outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            border-color: #DE3A5B;
         }
 
-        .answer-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 15px;
-            line-height: 1.6;
+        .send-btn {
+            background: linear-gradient(135deg, #DE3A5B, #c62d47);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .loading {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #DE3A5B;
             border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
+            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .hidden {
-            display: none;
-        }
-
-        .icon {
-            width: 20px;
-            height: 20px;
-        }
-
-        .website-preview {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 15px;
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 6px;
             margin-top: 10px;
-            font-size: 0.9rem;
-            color: #475569;
-            max-height: 150px;
-            overflow-y: auto;
         }
 
-        .qa-section {
-            opacity: 0.5;
-            pointer-events: none;
-            transition: all 0.3s ease;
+        .success {
+            color: #155724;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
         }
 
-        .qa-section.enabled {
-            opacity: 1;
-            pointer-events: auto;
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .left-panel, .right-panel {
+                flex: none;
+                height: 50vh;
+            }
+            
+            .chat-container {
+                height: calc(50vh - 100px);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🤖 Website Q&A Bot</h1>
-            <p>Scrape any website and ask questions about its content using AI</p>
+    <div class="header">
+        <h1>✨ Sparkly-AI-Assistance</h1>
+    </div>
+
+    <div class="main-container">
+        <!-- Left Panel: Website Trainer -->
+        <div class="left-panel">
+            <h2 class="panel-title">🎯 Website Trainer</h2>
+            <div class="trainer-section">
+                <input 
+                    type="url" 
+                    id="urlInput" 
+                    class="url-input" 
+                    placeholder="Enter website URL (e.g., https://example.com)"
+                    autocomplete="url"
+                >
+                <button id="trainBtn" class="train-btn">
+                    <span id="trainBtnText">🚀 Train AI</span>
+                </button>
+                
+                <div class="status-card">
+                    <div class="status-text" id="statusText">
+                        Ready to train on a website. Enter a URL above and click "Train AI".
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="content">
-            <!-- URL Scraping Section -->
-            <div class="section">
-                <h2>
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                    </svg>
-                    1. Paste Website URL
-                </h2>
-                <div class="url-input-group">
-                    <input type="url" id="urlInput" class="url-input" placeholder="https://example.com" />
-                    <button id="scrapeBtn" class="btn btn-primary">
-                        <span id="scrapeText">Scrape Website</span>
-                        <div id="scrapeLoading" class="loading hidden"></div>
-                    </button>
+        <!-- Right Panel: Chat Interface -->
+        <div class="right-panel">
+            <h2 class="panel-title">💬 Chat Assistant</h2>
+            <div class="chat-container">
+                <div class="chat-header">
+                    <span>AI Assistant</span>
+                    <button id="refreshBtn" class="refresh-btn">🔄 Refresh</button>
                 </div>
-                <div id="scrapeStatus"></div>
-            </div>
-
-            <!-- Q&A Section -->
-            <div class="section qa-section" id="qaSection">
-                <h2>
-                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    2. Ask Questions About the Website
-                </h2>
-                <textarea id="questionInput" class="question-input" placeholder="What is this website about? What are the main topics covered? etc."></textarea>
-                <button id="askBtn" class="btn btn-primary">
-                    <span id="askText">Ask Question</span>
-                    <div id="askLoading" class="loading hidden"></div>
-                </button>
-                <div id="answerBox" class="answer-box hidden">
-                    <div id="answerContent"></div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        Hi! I'm your Sparkly AI Assistant. You can ask me general questions, or train me on a website using the left panel for specialized knowledge! ✨
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <input 
+                            type="text" 
+                            id="chatInput" 
+                            class="chat-input" 
+                            placeholder="Ask me anything..."
+                            autocomplete="off"
+                        >
+                        <button id="sendBtn" class="send-btn">
+                            <span id="sendBtnText">Send</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        class WebsiteBot {
+        class SparklyAI {
             constructor() {
-                this.scrapeBtn = document.getElementById('scrapeBtn');
-                this.askBtn = document.getElementById('askBtn');
-                this.urlInput = document.getElementById('urlInput');
-                this.questionInput = document.getElementById('questionInput');
-                this.scrapeStatus = document.getElementById('scrapeStatus');
-                this.answerBox = document.getElementById('answerBox');
-                this.answerContent = document.getElementById('answerContent');
-                this.qaSection = document.getElementById('qaSection');
-                
-                this.initEventListeners();
+                this.isTraining = false;
+                this.isChatting = false;
+                this.hasTrainedContent = false;
+                this.currentUrl = '';
+                this.initializeEventListeners();
             }
 
-            initEventListeners() {
-                this.scrapeBtn.addEventListener('click', () => this.scrapeWebsite());
-                this.askBtn.addEventListener('click', () => this.askQuestion());
-                
-                // Allow Enter key to submit
-                this.urlInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.scrapeWebsite();
+            initializeEventListeners() {
+                // Training functionality
+                document.getElementById('trainBtn').addEventListener('click', () => this.trainWebsite());
+                document.getElementById('urlInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.trainWebsite();
                 });
-                
-                this.questionInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && e.ctrlKey) this.askQuestion();
+
+                // Chat functionality
+                document.getElementById('sendBtn').addEventListener('click', () => this.sendMessage());
+                document.getElementById('chatInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendMessage();
                 });
+
+                // Refresh functionality
+                document.getElementById('refreshBtn').addEventListener('click', () => this.refreshChat());
             }
 
-            showLoading(type) {
-                if (type === 'scrape') {
-                    document.getElementById('scrapeText').textContent = 'Scraping...';
-                    document.getElementById('scrapeLoading').classList.remove('hidden');
-                    this.scrapeBtn.disabled = true;
-                } else if (type === 'ask') {
-                    document.getElementById('askText').textContent = 'Thinking...';
-                    document.getElementById('askLoading').classList.remove('hidden');
-                    this.askBtn.disabled = true;
-                }
-            }
+            async trainWebsite() {
+                if (this.isTraining) return;
 
-            hideLoading(type) {
-                if (type === 'scrape') {
-                    document.getElementById('scrapeText').textContent = 'Scrape Website';
-                    document.getElementById('scrapeLoading').classList.add('hidden');
-                    this.scrapeBtn.disabled = false;
-                } else if (type === 'ask') {
-                    document.getElementById('askText').textContent = 'Ask Question';
-                    document.getElementById('askLoading').classList.add('hidden');
-                    this.askBtn.disabled = false;
-                }
-            }
-
-            showStatus(message, isError = false) {
-                this.scrapeStatus.innerHTML = message;
-                this.scrapeStatus.className = `status ${isError ? 'error' : 'success'}`;
-            }
-
-            async scrapeWebsite() {
-                const url = this.urlInput.value.trim();
+                const url = document.getElementById('urlInput').value.trim();
                 if (!url) {
-                    this.showStatus('Please enter a URL', true);
+                    this.showStatus('Please enter a valid URL', 'error');
                     return;
                 }
 
-                this.showLoading('scrape');
-                
+                this.isTraining = true;
+                this.updateTrainButton(true);
+                this.showStatus('🔄 Training AI on website content...', 'loading');
+
                 try {
-                    const response = await fetch('/scrape', {
+                    const response = await fetch('/train', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -333,72 +391,143 @@
                     });
 
                     const result = await response.json();
-                    
+
                     if (result.success) {
-                        this.showStatus(`
-                            <strong>✅ Website scraped successfully!</strong><br>
-                            <small>Content length: ${result.content_length} characters</small>
-                            <div class="website-preview">
-                                <strong>Preview:</strong><br>
-                                ${result.preview}
-                            </div>
-                        `);
-                        this.qaSection.classList.add('enabled');
-                        this.questionInput.focus();
+                        this.hasTrainedContent = true;
+                        this.currentUrl = url;
+                        this.showStatus(`✅ Successfully trained on: ${result.url}\nContent length: ${result.content_length} characters`, 'success');
+                        this.addChatMessage(`🎉 Great! I've been trained on the website: ${result.url}. Now I can answer questions about its content!`, 'bot');
                     } else {
-                        this.showStatus(`❌ Error: ${result.error}`, true);
+                        this.showStatus(`❌ Training failed: ${result.error}`, 'error');
                     }
                 } catch (error) {
-                    this.showStatus(`❌ Network error: ${error.message}`, true);
+                    this.showStatus(`❌ Network error: ${error.message}`, 'error');
                 } finally {
-                    this.hideLoading('scrape');
+                    this.isTraining = false;
+                    this.updateTrainButton(false);
                 }
             }
 
-            async askQuestion() {
-                const question = this.questionInput.value.trim();
-                if (!question) {
-                    alert('Please enter a question');
-                    return;
-                }
+            async sendMessage() {
+                if (this.isChatting) return;
 
-                this.showLoading('ask');
-                this.answerBox.classList.add('hidden');
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
                 
+                if (!message) return;
+
+                // Add user message to chat
+                this.addChatMessage(message, 'user');
+                input.value = '';
+
+                this.isChatting = true;
+                this.updateSendButton(true);
+
+                // Add loading message
+                const loadingId = this.addChatMessage('🤔 Thinking...', 'bot');
+
                 try {
                     const response = await fetch('/ask', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ question: question })
+                        body: JSON.stringify({ 
+                            question: message,
+                            has_trained_content: this.hasTrainedContent,
+                            source_url: this.currentUrl
+                        })
                     });
 
                     const result = await response.json();
-                    
+
+                    // Remove loading message
+                    this.removeMessage(loadingId);
+
                     if (result.success) {
-                        this.answerContent.innerHTML = `
-                            <strong>Q:</strong> ${question}<br><br>
-                            <strong>A:</strong> ${result.answer.replace(/\n/g, '<br>')}<br><br>
-                            <small><em>Source: ${result.source_url}</em></small>
-                        `;
-                        this.answerBox.classList.remove('hidden');
+                        let responseText = result.answer;
+                        if (result.source_url) {
+                            responseText += `\n\n📚 *Source: ${result.source_url}*`;
+                        }
+                        this.addChatMessage(responseText, 'bot');
                     } else {
-                        this.answerContent.innerHTML = `<strong>Error:</strong> ${result.error}`;
-                        this.answerBox.classList.remove('hidden');
+                        this.addChatMessage(`❌ Sorry, I encountered an error: ${result.error}`, 'bot');
                     }
                 } catch (error) {
-                    this.answerContent.innerHTML = `<strong>Network Error:</strong> ${error.message}`;
-                    this.answerBox.classList.remove('hidden');
+                    this.removeMessage(loadingId);
+                    this.addChatMessage(`❌ Network error: ${error.message}`, 'bot');
                 } finally {
-                    this.hideLoading('ask');
+                    this.isChatting = false;
+                    this.updateSendButton(false);
+                }
+            }
+
+            addChatMessage(message, type) {
+                const messagesContainer = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                const messageId = 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+                
+                messageDiv.id = messageId;
+                messageDiv.className = `message ${type}-message`;
+                messageDiv.textContent = message;
+                
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                return messageId;
+            }
+
+            removeMessage(messageId) {
+                const message = document.getElementById(messageId);
+                if (message) {
+                    message.remove();
+                }
+            }
+
+            refreshChat() {
+                const messagesContainer = document.getElementById('chatMessages');
+                messagesContainer.innerHTML = `
+                    <div class="message bot-message">
+                        Hi! I'm your Sparkly AI Assistant. You can ask me general questions, or train me on a website using the left panel for specialized knowledge! ✨
+                    </div>
+                `;
+            }
+
+            updateTrainButton(isLoading) {
+                const btn = document.getElementById('trainBtn');
+                const btnText = document.getElementById('trainBtnText');
+                
+                btn.disabled = isLoading;
+                btnText.innerHTML = isLoading ? '<span class="loading"></span> Training...' : '🚀 Train AI';
+            }
+
+            updateSendButton(isLoading) {
+                const btn = document.getElementById('sendBtn');
+                const btnText = document.getElementById('sendBtnText');
+                
+                btn.disabled = isLoading;
+                btnText.textContent = isLoading ? '...' : 'Send';
+            }
+
+            showStatus(message, type = 'info') {
+                const statusElement = document.getElementById('statusText');
+                statusElement.textContent = message;
+                
+                // Remove existing classes
+                statusElement.className = 'status-text';
+                
+                // Add appropriate class based on type
+                if (type === 'error') {
+                    statusElement.className += ' error';
+                } else if (type === 'success') {
+                    statusElement.className += ' success';
                 }
             }
         }
 
-        // Initialize the app when DOM is loaded
+        // Initialize the application
         document.addEventListener('DOMContentLoaded', () => {
-            new WebsiteBot();
+            new SparklyAI();
         });
     </script>
 </body>
