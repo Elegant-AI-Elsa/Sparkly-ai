@@ -4,7 +4,7 @@ Sparkly-AI-Assistance is a smart web-based chatbot that allows users to input an
 
 ## 🔗 Live Demo
 
-Explore the app here 👉 [https://sparkly-ai.com](https://sparkly-ai.com)
+Explore the app here 👉 [https://sparkly-ai.onrender.com](https://sparkly-ai.onrender.com)
 
 ## ✨ Key Features
 
